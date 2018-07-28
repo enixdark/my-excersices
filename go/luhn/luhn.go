@@ -4,34 +4,36 @@ import (
 	"strings"
 	// "errors"
 	"strconv"
+	"regexp"
 )
 
 func Valid(num string) bool {
-	_num := strings.Trim(num, "")
-	if _, err := strconv.Atoi(_num); err != nil {
-		return false
-	}
+	sum := 0
+    re := regexp.MustCompile(" ")
+	list_num := re.Split(num, -1)
+	_num := strings.Join(list_num, "")
 
-	if len(_num) == 3 || len(_num) == 2 {
-		return true
-	}
-	// var nums []int
-	total := 0
-	for i, n := range _num {
-		var temp int
-		if(i % 2 == 0){
-			temp = int(n) * 2 
-			if temp > 9 {
-				temp = temp - 9
-			}
-		} else {
-			temp = int(n)
+	for _, n := range list_num {
+		if _, err := strconv.Atoi(n); err != nil {
+			return false
 		}
-		
-		total += temp
-        // nums = append(nums, temp)
 	}
-	
-	return total % 10 == 0
 
+	digits := len(_num)
+	parity := digits % 2
+    
+	for i := 0; i < digits; i++ {
+		var digit = int(_num[i] - 48)
+		if i % 2 == parity {
+			digit *= 2
+			if digit > 9 {
+			    digit -= 9
+		    }
+		}
+
+		sum += digit
+	}
+
+	return len(num) > 1 && sum % 10 == 0
 }
+
